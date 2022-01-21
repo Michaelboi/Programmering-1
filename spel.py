@@ -9,7 +9,7 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 
 # Titeln
-pygame.display.set_caption('Mitt jspel')
+pygame.display.set_caption('Mitt braspel')
 
 # Spelaren och Botarna
 BotImg = pygame.image.load('space-invaders.png')
