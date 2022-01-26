@@ -1,0 +1,2 @@
+# ger den en slumpmässig position.
+(random.randint(1,200)

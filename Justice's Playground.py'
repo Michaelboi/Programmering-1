@@ -1,0 +1,61 @@
+import pygame
+import random
+
+
+pygame.init()
+# Time limit på när de förflytar sig.
+clock=pygame.time.Clock()
+
+
+WIDTH,HEIGHT= (400,600)
+
+screen =pygame.display.set_mode((WIDTH,HEIGHT))
+
+
+
+Running= True
+
+
+# En funktion som ritar ut fienderna på en position.
+def Draw(Levande_fiender, xpos):
+    ypos=0
+    #en loop för fiendernas position och förflyttning
+    for square in Levande_fiender:
+        screen.blit(square,(20,ypos*32))
+        ypos+=1
+
+Fiender = []
+
+while Running:
+    clock.tick(10)
+    screen.fill((255,255,255))
+    Rectangle=pygame.Surface((32,32))
+
+    Rectangle.fill((255,0,255))
+
+
+    for event in pygame.event.get():
+        if event.type== pygame.QUIT:
+            Running= False
+
+    # Om en knapp är tryckt så spawnar den flera fiender.
+    keys_pressed= pygame.key.get_pressed()
+    if keys_pressed[pygame.K_SPACE]:
+        Fiender.append(Rectangle)
+        print(len(Fiender))
+
+
+
+
+    Draw(Fiender,random.randint(1,200))
+
+    pygame.display.update()
+'''
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Author: Justice.N
+
+Plaggiera inte
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+'''

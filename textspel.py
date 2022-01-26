@@ -18,6 +18,9 @@ def room1():
         time.sleep(1.0)
         answer2 = input('Det finns en psykopat som springer mot dig som kommer anfalla dig med en kniv.\n'
                          'Du har två alternativ. 1: Springa iväg. eller 2: Ge honom en present.')
+        if '1' in answer2:
+            print('He chases you down and kills you')
+            game_over()
         if '2' in answer2:
             room2()
 

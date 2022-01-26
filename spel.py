@@ -9,17 +9,25 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 
 # Titeln
-pygame.display.set_caption('Mitt braspel')
+pygame.display.set_caption('Mitt spel')
 
 # Spelaren och Botarna
 BotImg = pygame.image.load('space-invaders.png')
-BotX = [7,8]
+BotX = 50
+BotY = 40
+
+
+
+
 
 class bot_spawn:
-    def __init__(self):
-        pass
+    def __init__(self, x, y):
+        screen.blit(BotImg, (x, y))
+
 
 spelareImg = pygame.image.load('Plane2.png')
+
+
 spelareX = 320
 spelareY = 390
 
@@ -28,12 +36,13 @@ spelareX_change = 0
 spelareY_change = 0
 
 # Botar
-def botar(x, y):
-    screen.blit(botImg)
+def botar(x):
+    for Enemies in x:
+        pass
 
 
 def spelare(x, y):
-    screen.blit(spelareImg, (x, y))
+    screen.blit(spelareImg,(x, y))
 
 
 # Kommer göra en oändlig loop som stoppas när fliken stängs.
@@ -43,6 +52,7 @@ while running:
     # RGB = Röd, Blå, Grön
     screen.fill((255, 255, 255))
 
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -51,12 +61,17 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 spelareX_change += 0.5
+
             if event.key == pygame.K_LEFT:
                 spelareX_change += -0.5
             if event.key == pygame.K_UP:
                 spelareY_change += -0.5
             if event.key == pygame.K_DOWN:
                 spelareY_change += 0.5
+            if event.key == pygame.K_q:
+                bot_spawn(BotX, BotY)
+
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or \
                     event.key == pygame.K_DOWN or event.key == pygame.K_UP:
@@ -75,6 +90,7 @@ while running:
     if spelareY <= -40:
         spelareY = -40
 
+    bot_spawn(BotX, BotY)
     spelare(spelareX, spelareY)
     pygame.display.update()
 
