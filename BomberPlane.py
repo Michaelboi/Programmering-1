@@ -1,31 +1,47 @@
 import pygame
 import random
 import math
+import playsound
+
+# bakgrunds musik
+playsound('C:\Users\MichaelNwaijah\Downloads\Musik.mp3')
 
 # initsierar pygame.
 pygame.init()
 
 # Skapar ett fönster som är 800 * 600
+# Bakgrund
 screen = pygame.display.set_mode((800, 600))
+bakgrund = pygame.image.load('Sky.png')
 
 # Titeln
 pygame.display.set_caption('Mitt spel')
 
-# Spelaren och Botarnas Start koordinater och ändringsvärde för X och Y
-BotImg = pygame.image.load('Botar.png')
+# en variabel som fixar kollision problemet för boten
 pixel = 64
-BotX = random.randint(50, 750)
-BotY = random.randint(0, 150)
-BotX_change = 0.4
-BotY_change = 30
 
+points = 0
 
-# Gör en hitbox för botten
+BotImg = []
+BotX = []
+BotY = []
+BotX_change = []
+BotY_change = []
+antal_botar = 5
 
+# en for loop som appendar in all information i listorna så att alla botar får samma kod
+# Botten får ett random x och y värde och har ändringsvärden för x och y
+for i in range(antal_botar):
+    BotImg.append(pygame.image.load('Botar.png'))
+    BotX.append(random.randint(50, 750))
+    BotY.append(random.randint(0, 100))
+    BotX_change.append(0.4)
+    BotY_change.append(30)
 
+# funktion som rendrar in botten på skärmen med blit.
 class Bot_spawn:
-    def __init__(self, x, y):
-        screen.blit(BotImg, ((x + pixel), y))
+    def __init__(self, x, y, i):
+        screen.blit(BotImg[i], ((x + pixel), y))
 
 
 spelareX = 320
@@ -35,7 +51,7 @@ spelareY = 450
 spelareX_change = 0
 spelareY_change = 0
 
-# när status = redo så syns skottet inte på skärmen
+# när status = klar så syns skottet inte på skärmen
 # när status = skjut så syns skottet på skärmen.
 SkottImg = pygame.image.load("skott.png")
 SkottX = 0
@@ -44,6 +60,15 @@ SkottX_change = 0
 SkottY_change = 1.5
 Skott_status = 'klar'
 
+points_value = 0
+font = pygame.font.Font('freesansbold.ttf', 28)
+textX = 20
+textY = 20
+
+# en funktion som visar poängen som då ökas varje gång man träffar en bot
+def visa_poäng(x, y):
+    points = font.render('Poäng : ' + str(points_value), True, (0, 0, 0))
+    screen.blit(points, (x, y))
 
 # Skottets funktion för att få med den på skärmen och se till att när villkoret är uppfyllt så används funktionen
 class Skott:
@@ -75,39 +100,35 @@ running = True
 while running:
     # RGB = Röd, Blå, Grön
     screen.fill((255, 255, 255))
-
+    # Bakgrund
+    screen.blit(bakgrund, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
         # Kollar om knapp är nedtryckt och gör att man kommer kunna röra på spelaren höger/vänster/ner/upp.
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 spelareX_change += 1
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 spelareX_change += -1
 
             # Anroppar class när knappen E är intryckt
-            if event.key == pygame.K_e:
+            if event.key == pygame.K_e or event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
                 if Skott_status == 'klar':
                     SkottX = spelareX
                     Skott(SkottX, SkottY)
 
         # När man inte trycker på tangenten så slutar den röra på sig.
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 spelareX_change = 0
-            if event.key == pygame.K_RIGHT:
-                spelareX_change = 0
-            if event.key == pygame.K_DOWN:
-                spelareX_change = 0
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 spelareX_change = 0
 
-    # Gör att de ökar och minskar med deras ändringsvärden.
+    # Gör att den ökar och minskar med ändringsvärden.
 
     spelareX += spelareX_change
-    BotX += BotX_change
 
     # Vägar som hindrar spelaren från att gå utanför banan och håller den på skärmen.
     if spelareX <= -45:
@@ -125,24 +146,26 @@ while running:
 
     # Bottarnas Barriärer och ändringsvärden när de nuddar väggen och åker andra hållet.
     # Ett stop villkor när en bot nuddar spelaren.
-    if BotX <= -70:
-        BotX_change = 0.4
-        BotY += BotY_change
-    if BotX >= 680:
-        BotX_change = -0.4
-        BotY += BotY_change
-    if BotY >= spelareY:
-        print('\nGame Over')
-        running = False
-    # Kollar om den kolliderar för att sen skicka allt till sina start positioner.
-    Kollisionen = Kollision(BotX, BotY, SkottX, SkottY)
-    if Kollisionen:
-        SkottY = 450
-        Skott_status = 'klar'
-        BotX = random.randint(50, 750)
-        BotY = random.randint(0, 150)
+    for i in range(antal_botar):
+        BotX[i] += BotX_change[i]
+        if BotX[i] <= -70:
+            BotX_change[i] = 0.5
+            BotY[i] += BotY_change[i]
+        if BotX[i] >= 680:
+            BotX_change[i] = -0.5
+            BotY[i] += BotY_change[i]
 
+        # Kollar om den kolliderar för att sen skicka allt till sina start positioner.
+        Kollisionen = Kollision(BotX[i], BotY[i], SkottX, SkottY)
+        if Kollisionen:
+            points_value += 1
+            SkottY = 450
+            Skott_status = 'klar'
+            BotX[i] = random.randint(50, 750)
+            BotY[i] = random.randint(0, 100)
+        Bot_spawn(BotX[i], BotY[i], i)
     # anroppar på alla ikoner/spelare och botar med deras värden och själva fliken så att de ska uppdatera.
-    Bot_spawn(BotX, BotY)
+
     spelare(spelareX, spelareY)
+    visa_poäng(textX, textY)
     pygame.display.update()
